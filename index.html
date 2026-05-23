@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BoxSafe — Clinician-led amateur boxing medical compliance</title>
+<meta name="description" content="BoxSafe is a clinician-led medical-compliance and digital Boxer Competition Record Book platform for Australian amateur boxing. Pilot federation: Boxing SA." />
+<link rel="preconnect" href="https://rsms.me/" />
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  :root { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif; }
+  html { font-feature-settings: "cv02","cv03","cv04","cv11"; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  /* iPhone 16 Pro frame — 393 x 852 logical, 19.5:9 aspect, ~3.5mm dynamic island */
+  .iphone {
+    width: 393px; height: 852px;
+    border-radius: 56px;
+    background: linear-gradient(180deg, #1f2937, #0f172a);
+    padding: 14px;
+    box-shadow:
+      0 30px 60px -20px rgba(15,23,42,.45),
+      0 0 0 2px #0f172a inset,
+      0 0 0 8px #1f2937 inset;
+    position: relative;
+  }
+  .iphone-screen {
+    width: 100%; height: 100%;
+    background: #fff;
+    border-radius: 44px;
+    overflow: hidden;
+    position: relative;
+  }
+  .iphone-island {
+    position: absolute;
+    top: 14px; left: 50%; transform: translateX(-50%);
+    width: 124px; height: 36px;
+    background: #000;
+    border-radius: 20px;
+    z-index: 30;
+  }
+  .iphone-statusbar {
+    height: 54px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding: 0 28px 8px 28px;
+    font-size: 15px; font-weight: 600; color: #0f172a;
+    position: relative; z-index: 10;
+  }
+  .iphone-home {
+    position: absolute;
+    bottom: 8px; left: 50%; transform: translateX(-50%);
+    width: 134px; height: 5px;
+    background: #0f172a;
+    border-radius: 999px;
+    opacity: .35;
+  }
+  /* Browser chrome for desktop frame */
+  .browser-chrome {
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .browser-dots { display:flex; gap:6px; }
+  .browser-dots span { width:11px; height:11px; border-radius:999px; display:inline-block; }
+  /* Screens hidden by default */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .mscreen { display: none; }
+  .mscreen.active { display: flex; }
+  /* Subtle texture for hero */
+  .hero-grid {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(16,185,129,.10), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(5,150,105,.08), transparent 50%),
+      linear-gradient(to right, rgba(15,23,42,.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15,23,42,.04) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+  }
+  .ring-emerald-strong { box-shadow: 0 0 0 4px rgba(4,120,87,.18); }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  /* Avatars (initials) */
+  .avatar {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:36px; height:36px; border-radius:999px;
+    font-weight:600; color:#fff; font-size:13px; letter-spacing:.02em;
+  }
+  .avatar-lg { width:64px; height:64px; font-size:20px; }
+  .avatar-xl { width:96px; height:96px; font-size:30px; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:2px 10px; border-radius:999px; font-size:12px; font-weight:500; }
+  .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; padding: 1px 6px; border:1px solid #e2e8f0; border-bottom-width:2px; border-radius:6px; background:#fff; color:#475569; }
+  /* Print-/screenshot-friendly */
+  @media print { body { background: #fff; } .no-print { display:none; } }
+</style>
+</head>
+<body class="bg-slate-100 text-slate-900 antialiased min-h-screen">
+
+<!-- ====================== TOP CHROME ====================== -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+  <div class="max-w-[1600px] mx-auto px-5 py-3 flex items-center gap-4">
+    <div class="flex items-center gap-2">
+      <!-- BoxSafe logo mark -->
+      <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white grid place-items-center shadow-sm">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6a4 4 0 0 0 4 4h0a4 4 0 0 0 4-4V7"/><path d="M11 7h7a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h-2"/><path d="M9 7H3"/></svg>
+      </div>
+      <div class="leading-tight">
+        <div class="text-[15px] font-semibold tracking-tight">BoxSafe</div>
+        <div class="text-[11px] text-slate-500 -mt-0.5">Clinician-led amateur boxing medical compliance</div>
+      </div>
+    </div>
+
+    <div class="hidden md:flex items-center gap-2 ml-4 text-[12px] text-slate-500">
+      <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pilot federation · Boxing SA</span>
+      <span class="pill bg-slate-50 text-slate-600 border border-slate-200">Conformant to World Boxing Medical Handbook 2025</span>
+    </div>
+
+    <div class="ml-auto flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
+      <button id="view-web" class="px-3 py-1.5 text-sm font-medium rounded-md bg-white shadow-sm text-slate-900">
+        <span class="inline-flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Web · Federation & Club</span>
+      </button>
+      <button id="view-mobile" class="px-3 py-1.5 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900">
+        <span class="inline-flex items-center gap-1.5"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg> Mobile · Boxer, Coach, Ringside Doctor</span>
+      </button>
+    </div>
+
+    <div class="hidden md:flex items-center gap-3 ml-3 text-sm text-slate-500">
+      <span class="hidden lg:inline">Demo</span>
+      <div class="avatar bg-emerald-700">JR</div>
+    </div>
+  </div>
+</header>
+
+<!-- =============================================================== -->
+<!-- ============ WEB / DESKTOP VIEW =============================== -->
+<!-- =============================================================== -->
+<section id="web-app" class="max-w-[1600px] mx-auto px-5 py-6">
+  <!-- Browser frame -->
+  <div class="rounded-2xl overflow-hidden border border-slate-300 shadow-2xl bg-white">
+    <div class="browser-chrome">
+      <div class="browser-dots">
+        <span style="background:#fca5a5"></span><span style="background:#fde68a"></span><span style="background:#86efac"></span>
+      </div>
+      <div class="ml-3 flex-1 max-w-xl bg-white border border-slate-200 rounded-md px-3 py-1 text-[12px] text-slate-500 flex items-center gap-2">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        app.boxsafe.com.au<span class="text-slate-300">/dashboard</span>
+      </div>
+      <div class="ml-auto text-[11px] text-slate-400">Chrome · macOS</div>
+    </div>
+
+    <!-- Inside-browser layout: sidebar + content -->
+    <div class="grid grid-cols-[240px_1fr] min-h-[820px]">
+      <!-- ============= SIDEBAR ============= -->
+      <aside class="bg-slate-50 border-r border-slate-200 p-4 flex flex-col">
+        <div class="flex items-center gap-2 mb-5 px-1">
+          <div class="w-8 h-8 rounded-lg bg-emerald-700 text-white grid place-items-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6a4 4 0 0 0 4 4h0a4 4 0 0 0 4-4V7"/><path d="M11 7h7a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h-2"/><path d="M9 7H3"/></svg>
+          </div>
+          <div>
+            <div class="text-sm font-semibold">Boxing SA</div>
+            <div class="text-[11px] text-slate-500">State federation tier</div>
+          </div>
+        </div>
+
+        <nav class="space-y-1 text-sm">
+          <button data-screen="login" class="nav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>
+            Sign-in / Landing
+          </button>
+          <button data-screen="dashboard" class="nav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg bg-emerald-700 text-white shadow-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            Governance Dashboard
+          </button>
+          <button data-screen="club" class="nav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M9 9h1M9 13h1M9 17h1M14 9h1M14 13h1M14 17h1"/></svg>
+            Club Admin
+          </button>
+          <button data-screen="boxer" class="nav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>
+            Boxer Detail · Digital BCR
+          </button>
+          <button data-screen="event" class="nav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-white hover:text-slate-900">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            Tournament Event
+          </button>
+        </nav>
+
+        <div class="mt-6 px-1">
+          <div class="text-[10px] uppercase tracking-wider text-slate-400 mb-2">Quick actions</div>
+          <button class="w-full mb-1 text-left text-[13px] px-3 py-2 rounded-lg hover:bg-white text-slate-700 flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add boxer
+          </button>
+          <button class="w-full mb-1 text-left text-[13px] px-3 py-2 rounded-lg hover:bg-white text-slate-700 flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Schedule event
+          </button>
+          <button class="w-full text-left text-[13px] px-3 py-2 rounded-lg hover:bg-white text-slate-700 flex items-center gap-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg> Export · AGPAL / SIA
+          </button>
+        </div>
+
+        <div class="mt-auto pt-4 border-t border-slate-200">
+          <div class="flex items-center gap-2.5">
+            <div class="avatar bg-emerald-700">AG</div>
+            <div class="leading-tight">
+              <div class="text-[13px] font-medium">Allison Goodes</div>
+              <div class="text-[11px] text-slate-500">President · Boxing SA</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ============= MAIN CONTENT ============= -->
+      <main class="bg-white relative">
+
+        <!-- ====== SCREEN: LOGIN / LANDING ====== -->
+        <section class="screen" data-screen="login">
+          <div class="hero-grid min-h-[820px] grid grid-cols-2">
+            <!-- Left: marketing -->
+            <div class="p-12 flex flex-col">
+              <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white grid place-items-center shadow">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6a4 4 0 0 0 4 4h0a4 4 0 0 0 4-4V7"/><path d="M11 7h7a3 3 0 0 1 3 3v0a3 3 0 0 1-3 3h-2"/><path d="M9 7H3"/></svg>
+                </div>
+                <div class="text-lg font-semibold tracking-tight">BoxSafe</div>
+              </div>
+
+              <div class="my-auto max-w-md">
+                <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100 mb-5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Pilot federation · Boxing SA</span>
+                <h1 class="text-4xl font-semibold tracking-tight leading-[1.1] mb-3">The clinician-led medical-compliance layer for Australian amateur boxing.</h1>
+                <p class="text-slate-600 leading-relaxed mb-6">Digital Boxer Competition Record Book. Ringside medical workflow. Bout-to-bout suspension enforcement across state lines. Built to complement revolutioniseSPORT — not replace it.</p>
+                <div class="grid grid-cols-3 gap-3 text-[12px]">
+                  <div class="rounded-lg border border-slate-200 p-3">
+                    <div class="font-semibold">Onshore</div><div class="text-slate-500">AWS Sydney · HPP-grade</div>
+                  </div>
+                  <div class="rounded-lg border border-slate-200 p-3">
+                    <div class="font-semibold">Offline-first</div><div class="text-slate-500">Regional venue ready</div>
+                  </div>
+                  <div class="rounded-lg border border-slate-200 p-3">
+                    <div class="font-semibold">Clinician-led</div><div class="text-slate-500">BA Medical Committee advised</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-[11px] text-slate-400">© 2026 BoxSafe Pty Ltd · ABN pending · Adelaide & Port Pirie, South Australia</div>
+            </div>
+
+            <!-- Right: sign-in -->
+            <div class="p-12 flex items-center justify-center bg-white border-l border-slate-200">
+              <div class="w-full max-w-sm">
+                <div class="mb-6">
+                  <div class="text-sm text-slate-500">Sign in to BoxSafe</div>
+                  <div class="text-2xl font-semibold tracking-tight mt-1">Welcome back, ringside.</div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                  <button class="border border-slate-200 rounded-lg py-2.5 text-[12px] font-medium hover:bg-slate-50">Boxing SA</button>
+                  <button class="border border-slate-200 rounded-lg py-2.5 text-[12px] font-medium hover:bg-slate-50">Boxing NSW</button>
+                  <button class="border border-slate-200 rounded-lg py-2.5 text-[12px] font-medium hover:bg-slate-50">Boxing VIC</button>
+                </div>
+
+                <label class="block text-[12px] font-medium text-slate-600 mb-1.5">Federation email</label>
+                <input class="w-full rounded-lg border-slate-200 mb-3 text-sm" value="jacob.ross@boxingsa.org.au" />
+
+                <label class="block text-[12px] font-medium text-slate-600 mb-1.5">Password</label>
+                <input type="password" class="w-full rounded-lg border-slate-200 mb-1 text-sm" value="••••••••••" />
+                <div class="text-right text-[11px] text-emerald-700 mb-3 cursor-pointer hover:underline">Forgot password?</div>
+
+                <button class="w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg py-2.5 text-sm font-medium shadow-sm flex items-center justify-center gap-2">
+                  Sign in <kbd class="kbd text-white border-emerald-600 bg-emerald-800/40">⏎</kbd>
+                </button>
+
+                <div class="flex items-center gap-3 my-4 text-[11px] text-slate-400">
+                  <div class="flex-1 h-px bg-slate-200"></div>OR<div class="flex-1 h-px bg-slate-200"></div>
+                </div>
+
+                <button class="w-full border border-slate-200 hover:bg-slate-50 rounded-lg py-2.5 text-sm font-medium flex items-center justify-center gap-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                  Send me a magic link
+                </button>
+
+                <p class="text-[11px] text-slate-500 mt-5 leading-relaxed">By signing in you accept BoxSafe's clinician-grade data-handling commitments under the Privacy Act 1988 (Cth) and the Vic / NSW / ACT health-records acts where applicable.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== SCREEN: GOVERNANCE DASHBOARD ====== -->
+        <section class="screen active" data-screen="dashboard">
+          <div class="px-8 py-7 border-b border-slate-200 flex items-end justify-between bg-white">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold">Boxing SA · State federation</div>
+              <h1 class="text-2xl font-semibold tracking-tight mt-1">Governance Dashboard</h1>
+              <p class="text-sm text-slate-500 mt-1">Single-pane view for the eight state federations. Snapshot as of Sun 24 May 2026, 09:42 ACST.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="text-[12px] text-slate-500 mr-2">Period</div>
+              <button class="border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] flex items-center gap-2 hover:bg-slate-50">
+                Last 30 days
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </button>
+              <button class="bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg px-3 py-1.5 text-[13px] font-medium flex items-center gap-2 shadow-sm">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+                Export AGPAL / SIA report
+              </button>
+            </div>
+          </div>
+
+          <div class="p-8 space-y-6 bg-slate-50">
+            <!-- KPI tiles -->
+            <div class="grid grid-cols-4 gap-4">
+              <div class="rounded-xl bg-white border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Active boxers</div>
+                <div class="flex items-end gap-2 mt-2">
+                  <div class="text-3xl font-semibold tracking-tight tabular">412</div>
+                  <div class="text-[12px] text-emerald-700 font-medium pb-1.5">+18 · 30d</div>
+                </div>
+                <div class="text-[12px] text-slate-500 mt-1">across 38 registered clubs</div>
+              </div>
+              <div class="rounded-xl bg-white border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Upcoming events</div>
+                <div class="flex items-end gap-2 mt-2">
+                  <div class="text-3xl font-semibold tracking-tight tabular">7</div>
+                  <div class="text-[12px] text-slate-500 pb-1.5">next 60d</div>
+                </div>
+                <div class="text-[12px] text-slate-500 mt-1">2 require additional ringside doctors</div>
+              </div>
+              <div class="rounded-xl bg-white border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Active suspensions</div>
+                <div class="flex items-end gap-2 mt-2">
+                  <div class="text-3xl font-semibold tracking-tight tabular text-amber-600">14</div>
+                  <div class="text-[12px] text-slate-500 pb-1.5">in force</div>
+                </div>
+                <div class="text-[12px] text-slate-500 mt-1">3 cross-state lookups blocked this week</div>
+              </div>
+              <div class="rounded-xl bg-white border border-rose-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-rose-600 font-medium">Compliance-overdue boxers</div>
+                <div class="flex items-end gap-2 mt-2">
+                  <div class="text-3xl font-semibold tracking-tight tabular text-rose-600">9</div>
+                  <div class="text-[12px] text-rose-600 pb-1.5">need attention</div>
+                </div>
+                <div class="text-[12px] text-slate-500 mt-1">yearly medical / serology expired</div>
+              </div>
+            </div>
+
+            <!-- Two-column body -->
+            <div class="grid grid-cols-3 gap-5">
+              <!-- Activity feed -->
+              <div class="col-span-2 rounded-xl bg-white border border-slate-200">
+                <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <div class="text-sm font-semibold">Recent activity</div>
+                    <div class="text-[12px] text-slate-500">Audit-logged events across the SA federation</div>
+                  </div>
+                  <button class="text-[12px] text-emerald-700 hover:underline">View full audit trail →</button>
+                </div>
+                <ul class="divide-y divide-slate-100">
+                  <li class="p-5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 grid place-items-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-[13px]"><span class="font-semibold">Dr Jacob Ross</span> cleared <span class="font-semibold">Cooper Daniels</span> — post-bout assessment, Whyalla RSL Card 14</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 tabular">Sun 24 May · 21:38 · 30-day protective suspension applied</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">CLEARED</span>
+                  </li>
+                  <li class="p-5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 grid place-items-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-[13px]"><span class="font-semibold">Suspension auto-enforced</span> · <span class="font-semibold">Tane Hohaia</span> blocked at Bendigo cross-state weigh-in</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 tabular">Sat 23 May · 17:04 · KO_LOC_LT_1MIN · 90-day suspension active until 04 Jul 2026</div>
+                    </div>
+                    <span class="pill bg-rose-50 text-rose-600 border border-rose-100">BLOCKED</span>
+                  </li>
+                  <li class="p-5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 grid place-items-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-[13px]"><span class="font-semibold">Yindii Wilson-Riley</span>'s Pre-Comp certificate expires in 14 days</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 tabular">Sat 23 May · 09:12 · expires 07 Jun 2026 · push notification sent to boxer + coach</div>
+                    </div>
+                    <span class="pill bg-amber-50 text-amber-700 border border-amber-100">EXPIRING</span>
+                  </li>
+                  <li class="p-5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 grid place-items-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-[13px]"><span class="font-semibold">New event published</span> · Riverland Open · Mon 22 Jun 2026 · Berri Town Hall</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 tabular">Fri 22 May · 16:21 · 24 bouts scheduled · 3 ringside doctor slots open</div>
+                    </div>
+                    <span class="pill bg-slate-50 text-slate-600 border border-slate-200">EVENT</span>
+                  </li>
+                  <li class="p-5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 grid place-items-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11v-1a3 3 0 0 0-3-3"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <div class="text-[13px]"><span class="font-semibold">Mia Adamopoulos</span> registered · Adelaide Boxing Academy · 57 kg</div>
+                      <div class="text-[11px] text-slate-500 mt-0.5 tabular">Fri 22 May · 14:05 · BCR1 issued · yearly medical recorded</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">NEW</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Right column: compliance + doctor coverage -->
+              <div class="space-y-5">
+                <div class="rounded-xl bg-white border border-slate-200 p-5">
+                  <div class="flex items-center justify-between">
+                    <div class="text-sm font-semibold">Compliance heatmap</div>
+                    <div class="text-[11px] text-slate-500">by club</div>
+                  </div>
+                  <div class="mt-4 grid grid-cols-8 gap-1.5">
+                    <!-- 32 cells, mostly green, some amber, two red -->
+                    <span class="aspect-square rounded bg-emerald-500" title="98% — Adelaide Boxing Academy"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-amber-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-rose-500" title="62% — Mount Gambier Showgrounds BC"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-amber-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-amber-400"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-emerald-500"></span>
+                    <span class="aspect-square rounded bg-rose-500" title="58% — Port Augusta BC"></span>
+                  </div>
+                  <div class="mt-3 flex items-center gap-3 text-[11px] text-slate-500">
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-emerald-500"></span>≥95%</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-amber-400"></span>80–94%</span>
+                    <span class="flex items-center gap-1"><span class="w-2 h-2 rounded bg-rose-500"></span>&lt;80%</span>
+                  </div>
+                </div>
+
+                <div class="rounded-xl bg-white border border-slate-200 p-5">
+                  <div class="text-sm font-semibold">Ringside doctor coverage</div>
+                  <div class="text-[11px] text-slate-500 mb-3">Next 60 days</div>
+                  <div class="space-y-3 text-[13px]">
+                    <div>
+                      <div class="flex justify-between"><span>Riverland Open · 22 Jun</span><span class="text-amber-700 font-medium">2 / 3</span></div>
+                      <div class="h-1.5 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full bg-amber-500" style="width:66%"></div></div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between"><span>Whyalla Junior Cup · 5 Jul</span><span class="text-emerald-700 font-medium">3 / 3</span></div>
+                      <div class="h-1.5 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full bg-emerald-500" style="width:100%"></div></div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between"><span>Adelaide Open · 18 Jul</span><span class="text-rose-700 font-medium">2 / 4</span></div>
+                      <div class="h-1.5 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full bg-rose-500" style="width:50%"></div></div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between"><span>Mt Gambier Show · 9 Aug</span><span class="text-emerald-700 font-medium">3 / 3</span></div>
+                      <div class="h-1.5 bg-slate-100 rounded-full mt-1.5 overflow-hidden"><div class="h-full bg-emerald-500" style="width:100%"></div></div>
+                    </div>
+                  </div>
+                  <button class="w-full mt-4 border border-slate-200 rounded-lg py-2 text-[12px] hover:bg-slate-50">Notify available doctors</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== SCREEN: CLUB ADMIN ====== -->
+        <section class="screen" data-screen="club">
+          <div class="px-8 py-7 border-b border-slate-200 flex items-end justify-between">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold">Adelaide Boxing Academy · ABA</div>
+              <h1 class="text-2xl font-semibold tracking-tight mt-1">Club roster & compliance</h1>
+              <p class="text-sm text-slate-500 mt-1">Traffic-light medical-compliance status for all 38 active members. Updates in real time as certificates expire or suspensions are entered.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] hover:bg-slate-50">Filter</button>
+              <button class="bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg px-3 py-1.5 text-[13px] font-medium shadow-sm">+ Add member</button>
+            </div>
+          </div>
+
+          <div class="px-8 py-6 grid grid-cols-3 gap-5">
+            <!-- Status pills -->
+            <div class="col-span-2 rounded-xl bg-white border border-slate-200 overflow-hidden">
+              <div class="grid grid-cols-3 border-b border-slate-100">
+                <button class="px-5 py-3 text-[13px] font-semibold border-b-2 border-emerald-600">All · 38</button>
+                <button class="px-5 py-3 text-[13px] text-slate-500 border-b-2 border-transparent">Boxers · 31</button>
+                <button class="px-5 py-3 text-[13px] text-slate-500 border-b-2 border-transparent">Coaches · 7</button>
+              </div>
+              <table class="w-full text-sm">
+                <thead class="text-[11px] uppercase tracking-wider text-slate-500 bg-slate-50">
+                  <tr>
+                    <th class="text-left px-5 py-3 font-medium">Member</th>
+                    <th class="text-left px-3 py-3 font-medium">Class</th>
+                    <th class="text-left px-3 py-3 font-medium">Compliance</th>
+                    <th class="text-left px-3 py-3 font-medium">Next bout</th>
+                    <th class="text-right px-5 py-3 font-medium"></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-emerald-700">CD</div>
+                      <div>
+                        <div class="font-medium">Cooper Daniels</div>
+                        <div class="text-[11px] text-slate-500">Elite · 71 kg · BCR-SA-0421</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Senior · 71 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Riverland Open · 22 Jun</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-amber-600">YW</div>
+                      <div>
+                        <div class="font-medium">Yindii Wilson-Riley</div>
+                        <div class="text-[11px] text-slate-500">Youth · 57 kg · BCR-SA-0388</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Youth · 57 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-amber-50 text-amber-700 border border-amber-100"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pre-comp cert expiring (14d)</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Riverland Open · 22 Jun</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-emerald-700">JN</div>
+                      <div>
+                        <div class="font-medium">Joseph Nguyen</div>
+                        <div class="text-[11px] text-slate-500">Senior · 63.5 kg · BCR-SA-0367</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Senior · 63.5 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Adelaide Open · 18 Jul</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-rose-600">TH</div>
+                      <div>
+                        <div class="font-medium">Tane Hohaia</div>
+                        <div class="text-[11px] text-slate-500">Senior · 80 kg · BCR-SA-0312</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Senior · 80 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-rose-50 text-rose-600 border border-rose-100"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Suspended · 90d to 04 Jul</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-400">— blocked</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-emerald-700">MA</div>
+                      <div>
+                        <div class="font-medium">Mia Adamopoulos</div>
+                        <div class="text-[11px] text-slate-500">Senior · 57 kg · BCR-SA-0445</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Senior · 57 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Riverland Open · 22 Jun</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-emerald-700">LO</div>
+                      <div>
+                        <div class="font-medium">Liam O'Sullivan</div>
+                        <div class="text-[11px] text-slate-500">Junior · 52 kg · BCR-SA-0481</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Junior · 52 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Whyalla Junior Cup · 5 Jul</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-amber-600">DB</div>
+                      <div>
+                        <div class="font-medium">Dakota Bilby-Marrkilyi</div>
+                        <div class="text-[11px] text-slate-500">Youth · 60 kg · BCR-SA-0428</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Youth · 60 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-amber-50 text-amber-700 border border-amber-100"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Yearly medical pending</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">TBA</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                  <tr class="hover:bg-slate-50 cursor-pointer">
+                    <td class="px-5 py-3 flex items-center gap-3">
+                      <div class="avatar bg-emerald-700">HK</div>
+                      <div>
+                        <div class="font-medium">Hassan Khalili</div>
+                        <div class="text-[11px] text-slate-500">Senior · 67 kg · BCR-SA-0399</div>
+                      </div>
+                    </td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Senior · 67 kg</td>
+                    <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear</span></td>
+                    <td class="px-3 py-3 text-[12px] text-slate-600">Adelaide Open · 18 Jul</td>
+                    <td class="px-5 py-3 text-right text-slate-400">›</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="px-5 py-3 text-[12px] text-slate-500 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <span>Showing 8 of 38 members</span>
+                <span class="flex items-center gap-1"><kbd class="kbd">←</kbd><kbd class="kbd">→</kbd> page</span>
+              </div>
+            </div>
+
+            <!-- Side panels -->
+            <div class="space-y-5">
+              <div class="rounded-xl bg-white border border-slate-200 p-5">
+                <div class="text-sm font-semibold">Upcoming bouts · this club</div>
+                <ul class="mt-3 space-y-3">
+                  <li class="flex items-start gap-3 text-[13px]">
+                    <div class="w-10 h-10 rounded-lg bg-slate-100 grid place-items-center text-[11px] font-semibold tabular text-slate-600 shrink-0">22<br/>JUN</div>
+                    <div class="flex-1">
+                      <div class="font-medium">Cooper Daniels <span class="text-slate-400 font-normal">vs</span> J. Patel (BNSW)</div>
+                      <div class="text-[11px] text-slate-500 tabular">Riverland Open · Berri · 71 kg · Ref: Williams</div>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-3 text-[13px]">
+                    <div class="w-10 h-10 rounded-lg bg-slate-100 grid place-items-center text-[11px] font-semibold tabular text-slate-600 shrink-0">22<br/>JUN</div>
+                    <div class="flex-1">
+                      <div class="font-medium">Mia Adamopoulos <span class="text-slate-400 font-normal">vs</span> A. Whitmore (BVIC)</div>
+                      <div class="text-[11px] text-slate-500 tabular">Riverland Open · Berri · 57 kg · Ref: Pereira</div>
+                    </div>
+                  </li>
+                  <li class="flex items-start gap-3 text-[13px]">
+                    <div class="w-10 h-10 rounded-lg bg-slate-100 grid place-items-center text-[11px] font-semibold tabular text-slate-600 shrink-0">05<br/>JUL</div>
+                    <div class="flex-1">
+                      <div class="font-medium">Liam O'Sullivan <span class="text-slate-400 font-normal">vs</span> K. Tapaha (BNT)</div>
+                      <div class="text-[11px] text-slate-500 tabular">Whyalla Junior Cup · 52 kg · Ref: Cavanaugh</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="rounded-xl bg-white border border-slate-200 p-5">
+                <div class="text-sm font-semibold">Action queue</div>
+                <ul class="mt-3 space-y-2 text-[13px]">
+                  <li class="flex items-center justify-between p-2.5 rounded-lg bg-rose-50 border border-rose-100">
+                    <span>Confirm Tane Hohaia's specialist review</span>
+                    <button class="text-[11px] font-medium text-rose-700 hover:underline">Open</button>
+                  </li>
+                  <li class="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 border border-amber-100">
+                    <span>Renew Y. Wilson-Riley pre-comp cert</span>
+                    <button class="text-[11px] font-medium text-amber-700 hover:underline">Open</button>
+                  </li>
+                  <li class="flex items-center justify-between p-2.5 rounded-lg bg-amber-50 border border-amber-100">
+                    <span>D. Bilby-Marrkilyi yearly medical</span>
+                    <button class="text-[11px] font-medium text-amber-700 hover:underline">Open</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== SCREEN: BOXER DETAIL / DIGITAL BCR ====== -->
+        <section class="screen" data-screen="boxer">
+          <div class="px-8 py-6 border-b border-slate-200 flex items-start justify-between bg-white">
+            <div class="flex items-center gap-5">
+              <div class="avatar avatar-xl bg-emerald-700">CD</div>
+              <div>
+                <div class="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold">Digital Boxer Competition Record Book · BCR-SA-0421</div>
+                <h1 class="text-2xl font-semibold tracking-tight mt-1">Cooper Daniels</h1>
+                <div class="text-[13px] text-slate-500 mt-1 flex items-center gap-3 tabular">
+                  <span>DOB 14 Mar 2002 · 24 yrs</span>
+                  <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                  <span>71 kg · Light-Welterweight</span>
+                  <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                  <span>Orthodox · 178 cm · 183 cm reach</span>
+                  <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                  <span>Adelaide Boxing Academy</span>
+                </div>
+                <div class="mt-3 flex items-center gap-2">
+                  <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Clear to box</span>
+                  <span class="pill bg-slate-100 text-slate-600">8W · 2L · 0D · 1 NC</span>
+                  <span class="pill bg-slate-100 text-slate-600">Last bout 23 May 2026</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] hover:bg-slate-50">Print BCR</button>
+              <button class="border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] hover:bg-slate-50">Export PDF</button>
+              <button class="bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg px-3 py-1.5 text-[13px] font-medium shadow-sm">Open clinical view</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6 p-8">
+            <!-- Medical clearance stack -->
+            <div class="space-y-4">
+              <div class="rounded-xl border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Medical clearance</div>
+                <ul class="mt-3 space-y-3 text-[13px]">
+                  <li class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium">Yearly medical</div>
+                      <div class="text-[11px] text-slate-500 tabular">Last: 12 Feb 2026 · Dr S. Lew</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">FIT · 263d</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium">Pre-comp certificate</div>
+                      <div class="text-[11px] text-slate-500 tabular">Last: 02 May 2026 · Dr J. Ross</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">Valid · 71d</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium">Serology (HBV/HCV/HIV)</div>
+                      <div class="text-[11px] text-slate-500 tabular">12 Feb 2026 · SA Pathology</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">Neg · 173d</span>
+                  </li>
+                  <li class="flex items-center justify-between">
+                    <div>
+                      <div class="font-medium">Concussion baseline</div>
+                      <div class="text-[11px] text-slate-500">SCAT6 · ScreenIT linked</div>
+                    </div>
+                    <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">Baseline set</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="rounded-xl border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Current suspension</div>
+                <div class="mt-3 p-3 rounded-lg bg-amber-50 border border-amber-100">
+                  <div class="text-[13px] font-medium text-amber-900">Protective · 30 days</div>
+                  <div class="text-[11px] text-amber-800 mt-0.5 tabular">23 May 2026 → 22 Jun 2026 · Whyalla RSL Card 14 · post-bout</div>
+                  <div class="text-[11px] text-amber-800 mt-2">Auto-applied per WB Medical Handbook 2025 §7.2.1 (no LOC, no RSCH).</div>
+                </div>
+              </div>
+
+              <div class="rounded-xl border border-slate-200 p-5">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Coach & federation</div>
+                <ul class="mt-3 space-y-3 text-[13px]">
+                  <li class="flex items-center gap-3"><div class="avatar bg-slate-500" style="width:32px;height:32px;font-size:11px">MK</div><div><div class="font-medium">Mike Kollatos</div><div class="text-[11px] text-slate-500">Coach · Silver · ABA</div></div></li>
+                  <li class="flex items-center gap-3"><div class="avatar bg-emerald-700" style="width:32px;height:32px;font-size:11px">AG</div><div><div class="font-medium">Boxing SA</div><div class="text-[11px] text-slate-500">State affiliation</div></div></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Competition history (BCR table — the centrepiece) -->
+            <div class="col-span-2">
+              <div class="rounded-xl border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                  <div>
+                    <div class="text-sm font-semibold">Competition history</div>
+                    <div class="text-[12px] text-slate-500">Digital Boxer Competition Record Book · WB-Handbook §3 conformant</div>
+                  </div>
+                  <button class="text-[12px] text-emerald-700 hover:underline">Add bout entry →</button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-[13px] tabular">
+                    <thead class="text-[10px] uppercase tracking-wider text-slate-500 bg-slate-50">
+                      <tr>
+                        <th class="text-left px-4 py-3 font-medium">Date</th>
+                        <th class="text-left px-3 py-3 font-medium">Opponent</th>
+                        <th class="text-left px-3 py-3 font-medium">Wt</th>
+                        <th class="text-left px-3 py-3 font-medium">Venue</th>
+                        <th class="text-left px-3 py-3 font-medium">Referee</th>
+                        <th class="text-left px-3 py-3 font-medium">Outcome</th>
+                        <th class="text-left px-3 py-3 font-medium">Med. findings</th>
+                        <th class="text-left px-3 py-3 font-medium">Suspension</th>
+                        <th class="text-left px-4 py-3 font-medium">Cleared</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">23 May 2026</td>
+                        <td class="px-3 py-3">M. Tjuwanpa <span class="text-slate-400">(BNT)</span></td>
+                        <td class="px-3 py-3">71</td>
+                        <td class="px-3 py-3">Whyalla RSL</td>
+                        <td class="px-3 py-3">P. Williams</td>
+                        <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP 3R</span></td>
+                        <td class="px-3 py-3 text-slate-600">Minor L-brow lac · steri</td>
+                        <td class="px-3 py-3 text-amber-700">30d protective</td>
+                        <td class="px-4 py-3 text-slate-500">22 Jun 2026</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">11 Apr 2026</td>
+                        <td class="px-3 py-3">N. Patel <span class="text-slate-400">(BNSW)</span></td>
+                        <td class="px-3 py-3">71</td>
+                        <td class="px-3 py-3">Penrith Panthers</td>
+                        <td class="px-3 py-3">L. Cavanaugh</td>
+                        <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP UD</span></td>
+                        <td class="px-3 py-3 text-slate-600">Nil</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">22 Feb 2026</td>
+                        <td class="px-3 py-3">J. Cavanaugh <span class="text-slate-400">(BSA)</span></td>
+                        <td class="px-3 py-3">71</td>
+                        <td class="px-3 py-3">Port Pirie Mem. Hall</td>
+                        <td class="px-3 py-3">A. Wickremesinghe</td>
+                        <td class="px-3 py-3"><span class="pill bg-rose-50 text-rose-600 border border-rose-100">L · RSCH 2R</span></td>
+                        <td class="px-3 py-3 text-slate-600">Head blow, no LOC · SCAT6 ↓4</td>
+                        <td class="px-3 py-3 text-rose-700">30d (KO/RSCH)</td>
+                        <td class="px-4 py-3 text-slate-500">24 Mar 2026</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">06 Dec 2025</td>
+                        <td class="px-3 py-3">K. Tapaha <span class="text-slate-400">(BNT)</span></td>
+                        <td class="px-3 py-3">71</td>
+                        <td class="px-3 py-3">Adelaide Oval FC</td>
+                        <td class="px-3 py-3">P. Williams</td>
+                        <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP SD</span></td>
+                        <td class="px-3 py-3 text-slate-600">Bilateral nasal · no #</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">14 Sep 2025</td>
+                        <td class="px-3 py-3">S. Pereira <span class="text-slate-400">(BVIC)</span></td>
+                        <td class="px-3 py-3">71</td>
+                        <td class="px-3 py-3">Bendigo Stadium</td>
+                        <td class="px-3 py-3">L. Cavanaugh</td>
+                        <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP UD</span></td>
+                        <td class="px-3 py-3 text-slate-600">Nil</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">02 Aug 2025</td>
+                        <td class="px-3 py-3">H. Khalili <span class="text-slate-400">(BSA)</span></td>
+                        <td class="px-3 py-3">67</td>
+                        <td class="px-3 py-3">Mt Gambier Showgrounds</td>
+                        <td class="px-3 py-3">A. Wickremesinghe</td>
+                        <td class="px-3 py-3"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">W · RSC 2R</span></td>
+                        <td class="px-3 py-3 text-slate-600">Nil</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">17 May 2025</td>
+                        <td class="px-3 py-3">J. Patel <span class="text-slate-400">(BNSW)</span></td>
+                        <td class="px-3 py-3">67</td>
+                        <td class="px-3 py-3">Riverland Sporting Cx</td>
+                        <td class="px-3 py-3">P. Williams</td>
+                        <td class="px-3 py-3"><span class="pill bg-rose-50 text-rose-600 border border-rose-100">L · WP MD</span></td>
+                        <td class="px-3 py-3 text-slate-600">R-cheek haematoma</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3">22 Feb 2025</td>
+                        <td class="px-3 py-3">Z. Mihailović <span class="text-slate-400">(BVIC)</span></td>
+                        <td class="px-3 py-3">67</td>
+                        <td class="px-3 py-3">Bendigo Stadium</td>
+                        <td class="px-3 py-3">L. Cavanaugh</td>
+                        <td class="px-3 py-3"><span class="pill bg-slate-100 text-slate-600">NC · cut</span></td>
+                        <td class="px-3 py-3 text-slate-600">Accidental clash · L-brow</td>
+                        <td class="px-3 py-3 text-slate-500">—</td>
+                        <td class="px-4 py-3 text-slate-500">n/a</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+                  <span>11 of 11 bouts since registration 14 Jun 2024 · WB Medical Handbook 2025 §3.2 conformant</span>
+                  <span class="flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Clinician-tier detail blurred for non-clinical roles</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ====== SCREEN: TOURNAMENT EVENT ====== -->
+        <section class="screen" data-screen="event">
+          <div class="px-8 py-7 border-b border-slate-200 flex items-end justify-between bg-white">
+            <div>
+              <div class="text-[11px] uppercase tracking-wider text-emerald-700 font-semibold">Live event · Boxing SA sanctioned</div>
+              <h1 class="text-2xl font-semibold tracking-tight mt-1">Whyalla RSL Card 14</h1>
+              <p class="text-sm text-slate-500 mt-1 tabular">Sat 23 May 2026 · doors 18:00 · first bell 19:00 ACST · Whyalla RSL Memorial Hall · Ring 1 · 12 bouts</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Live · Bout 7 of 12</div>
+              <button class="border border-slate-200 rounded-lg px-3 py-1.5 text-[13px] hover:bg-slate-50">Medical jury report</button>
+              <button class="bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg px-3 py-1.5 text-[13px] font-medium shadow-sm">Close card</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-4 gap-5 p-8 bg-slate-50">
+            <!-- Ringside doctors -->
+            <div class="rounded-xl bg-white border border-slate-200 p-5">
+              <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Ringside doctors · 3 / 3</div>
+              <ul class="mt-3 space-y-3 text-[13px]">
+                <li class="flex items-center gap-3"><div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">JR</div><div><div class="font-medium">Dr Jacob Ross</div><div class="text-[11px] text-slate-500">Medical jury chair</div></div></li>
+                <li class="flex items-center gap-3"><div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">BW</div><div><div class="font-medium">Dr Bryn Watson</div><div class="text-[11px] text-slate-500">Ringside · red corner</div></div></li>
+                <li class="flex items-center gap-3"><div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">PG</div><div><div class="font-medium">Dr Paddy Golden</div><div class="text-[11px] text-slate-500">Ringside · blue corner</div></div></li>
+              </ul>
+              <div class="mt-4 pt-4 border-t border-slate-100">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium mb-2">Officials</div>
+                <div class="text-[12px] text-slate-600 space-y-1"><div>Referee · P. Williams</div><div>Judges · 3 × AIBA accredited</div><div>Timekeeper · K. Tapaha Jr</div></div>
+              </div>
+            </div>
+
+            <!-- Card -->
+            <div class="col-span-3 rounded-xl bg-white border border-slate-200 overflow-hidden">
+              <div class="px-5 py-3 border-b border-slate-100 grid grid-cols-12 text-[10px] uppercase tracking-wider text-slate-500 font-medium">
+                <div class="col-span-1">#</div>
+                <div class="col-span-2">Red corner</div>
+                <div class="col-span-2">Blue corner</div>
+                <div class="col-span-1">Class</div>
+                <div class="col-span-1">Rounds</div>
+                <div class="col-span-2">Status</div>
+                <div class="col-span-2">Doctor</div>
+                <div class="col-span-1 text-right">Med</div>
+              </div>
+              <ul class="divide-y divide-slate-100 text-[13px] tabular">
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50">
+                  <div class="col-span-1 text-slate-400">1</div>
+                  <div class="col-span-2 font-medium">L. O'Sullivan</div>
+                  <div class="col-span-2">K. Tapaha</div>
+                  <div class="col-span-1 text-slate-600">52 kg · Jr</div>
+                  <div class="col-span-1 text-slate-600">3 × 2'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-100 text-slate-600">Complete · WP 3R</span></div>
+                  <div class="col-span-2 text-slate-600">Dr P. Golden</div>
+                  <div class="col-span-1 text-right text-emerald-600">✓</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50">
+                  <div class="col-span-1 text-slate-400">2</div>
+                  <div class="col-span-2 font-medium">M. Adamopoulos</div>
+                  <div class="col-span-2">A. Whitmore</div>
+                  <div class="col-span-1 text-slate-600">57 kg · Sr</div>
+                  <div class="col-span-1 text-slate-600">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-100 text-slate-600">Complete · WP UD</span></div>
+                  <div class="col-span-2 text-slate-600">Dr B. Watson</div>
+                  <div class="col-span-1 text-right text-emerald-600">✓</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50">
+                  <div class="col-span-1 text-slate-400">3</div>
+                  <div class="col-span-2 font-medium">J. Nguyen</div>
+                  <div class="col-span-2">H. Khalili</div>
+                  <div class="col-span-1 text-slate-600">63.5 kg · Sr</div>
+                  <div class="col-span-1 text-slate-600">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-100 text-slate-600">Complete · L MD</span></div>
+                  <div class="col-span-2 text-slate-600">Dr J. Ross</div>
+                  <div class="col-span-1 text-right text-emerald-600">✓</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 bg-rose-50/30">
+                  <div class="col-span-1 text-slate-400">4</div>
+                  <div class="col-span-2 font-medium">D. Bilby-Marrkilyi</div>
+                  <div class="col-span-2">S. Pereira</div>
+                  <div class="col-span-1 text-slate-600">60 kg · Yth</div>
+                  <div class="col-span-1 text-slate-600">3 × 2'</div>
+                  <div class="col-span-2"><span class="pill bg-rose-50 text-rose-600 border border-rose-100">RSCH R2 · flagged</span></div>
+                  <div class="col-span-2 text-slate-600">Dr J. Ross</div>
+                  <div class="col-span-1 text-right"><span class="pill bg-rose-50 text-rose-600 border border-rose-100">!</span></div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50">
+                  <div class="col-span-1 text-slate-400">5</div>
+                  <div class="col-span-2 font-medium">Z. Wickremesinghe</div>
+                  <div class="col-span-2">J. Cavanaugh</div>
+                  <div class="col-span-1 text-slate-600">67 kg · Sr</div>
+                  <div class="col-span-1 text-slate-600">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-100 text-slate-600">Complete · WP 3R</span></div>
+                  <div class="col-span-2 text-slate-600">Dr P. Golden</div>
+                  <div class="col-span-1 text-right text-emerald-600">✓</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50">
+                  <div class="col-span-1 text-slate-400">6</div>
+                  <div class="col-span-2 font-medium">N. Patel</div>
+                  <div class="col-span-2">J. Sciberras</div>
+                  <div class="col-span-1 text-slate-600">67 kg · Sr</div>
+                  <div class="col-span-1 text-slate-600">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-100 text-slate-600">Complete · KO R1</span></div>
+                  <div class="col-span-2 text-slate-600">Dr B. Watson</div>
+                  <div class="col-span-1 text-right text-emerald-600">✓</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-emerald-50/40 bg-emerald-50/60">
+                  <div class="col-span-1 font-semibold text-emerald-700">7</div>
+                  <div class="col-span-2 font-semibold">C. Daniels</div>
+                  <div class="col-span-2 font-semibold">M. Tjuwanpa</div>
+                  <div class="col-span-1 text-slate-600">71 kg · Sr</div>
+                  <div class="col-span-1 text-slate-600">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> In ring · R2 0:48</span></div>
+                  <div class="col-span-2 text-slate-600">Dr J. Ross</div>
+                  <div class="col-span-1 text-right text-slate-300">—</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 text-slate-400">
+                  <div class="col-span-1">8</div>
+                  <div class="col-span-2">T. Hohaia</div>
+                  <div class="col-span-2 line-through">scratched</div>
+                  <div class="col-span-1">80 kg · Sr</div>
+                  <div class="col-span-1">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-rose-50 text-rose-600 border border-rose-100">Withdrawn · suspended</span></div>
+                  <div class="col-span-2">—</div>
+                  <div class="col-span-1 text-right">—</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 text-slate-500">
+                  <div class="col-span-1">9</div>
+                  <div class="col-span-2">A. Adekunle</div>
+                  <div class="col-span-2">T. Pavlidis</div>
+                  <div class="col-span-1">80 kg · Sr</div>
+                  <div class="col-span-1">3 × 3'</div>
+                  <div class="col-span-2"><span class="pill bg-slate-50 text-slate-500 border border-slate-200">Up next</span></div>
+                  <div class="col-span-2">Dr B. Watson</div>
+                  <div class="col-span-1 text-right">—</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 text-slate-400">
+                  <div class="col-span-1">10</div>
+                  <div class="col-span-2">M. Kollatos Jr</div>
+                  <div class="col-span-2">D. McGann</div>
+                  <div class="col-span-1">86 kg · Sr</div>
+                  <div class="col-span-1">3 × 3'</div>
+                  <div class="col-span-2 text-slate-400">Scheduled</div>
+                  <div class="col-span-2">Dr P. Golden</div>
+                  <div class="col-span-1 text-right">—</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 text-slate-400">
+                  <div class="col-span-1">11</div>
+                  <div class="col-span-2">B. Tjapaltjarri</div>
+                  <div class="col-span-2">R. Lawrence</div>
+                  <div class="col-span-1">86 kg · Sr</div>
+                  <div class="col-span-1">3 × 3'</div>
+                  <div class="col-span-2 text-slate-400">Scheduled</div>
+                  <div class="col-span-2">Dr J. Ross</div>
+                  <div class="col-span-1 text-right">—</div>
+                </li>
+                <li class="grid grid-cols-12 items-center px-5 py-3 hover:bg-slate-50 text-slate-400">
+                  <div class="col-span-1">12</div>
+                  <div class="col-span-2">J. Kalimuthu</div>
+                  <div class="col-span-2">P. Antoniadis</div>
+                  <div class="col-span-1">+92 kg · Sr</div>
+                  <div class="col-span-1">3 × 3'</div>
+                  <div class="col-span-2 text-slate-400">Scheduled · Main</div>
+                  <div class="col-span-2">Dr B. Watson</div>
+                  <div class="col-span-1 text-right">—</div>
+                </li>
+              </ul>
+              <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+                <span>All bouts permit-validated · SA ORSR #2026-WHY-014</span>
+                <span>Live sync with revolutioniseSPORT roster · OK</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</section>
+
+
+<!-- =============================================================== -->
+<!-- ============ MOBILE VIEW ====================================== -->
+<!-- =============================================================== -->
+<section id="mobile-app" class="max-w-[1600px] mx-auto px-5 py-6" style="display:none">
+  <div class="grid grid-cols-[260px_1fr] gap-6">
+    <!-- Mobile screen picker -->
+    <aside class="bg-white rounded-2xl border border-slate-200 p-4 h-fit sticky top-24">
+      <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium px-1 mb-3">Mobile screens</div>
+      <nav class="space-y-1 text-sm">
+        <button data-mscreen="home" class="mnav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg bg-emerald-700 text-white shadow-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg> Boxer home
+        </button>
+        <button data-mscreen="ringside" class="mnav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c-1 5-4.5 9-9 9s-8-4-9-9c1-5 4.5-9 9-9s8 4 9 9z"/></svg> Ringside doctor
+        </button>
+        <button data-mscreen="coach" class="mnav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/></svg> Coach view
+        </button>
+        <button data-mscreen="lookup" class="mnav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg> Suspension lookup
+        </button>
+        <button data-mscreen="audit" class="mnav-btn w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg> Audit trail
+        </button>
+      </nav>
+
+      <div class="mt-5 pt-4 border-t border-slate-100">
+        <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium px-1 mb-2">About this view</div>
+        <p class="text-[12px] text-slate-600 leading-relaxed px-1">React Native shell. iPad-first for ringside doctors; phone for boxer / coach / suspension lookup. Offline-capable: every screen here works without connectivity, then syncs.</p>
+      </div>
+    </aside>
+
+    <!-- Phone canvas -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-8 flex items-start justify-center min-h-[920px]">
+      <div class="iphone">
+        <div class="iphone-island"></div>
+        <div class="iphone-screen">
+          <!-- ====== MSCREEN: BOXER HOME ====== -->
+          <div class="mscreen active flex-col h-full" data-mscreen="home">
+            <div class="iphone-statusbar"><span class="tabular">9:41</span><span class="flex items-center gap-1.5"><svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4" y="4" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="9" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 0c2.5 0 4.8 1 6.5 2.5l-1.3 1.3C11.3 2.5 9.5 1.7 7.5 1.7s-3.8.8-5.2 2.1L1 2.5C2.7 1 5 0 7.5 0z"/></svg><svg width="24" height="11" viewBox="0 0 24 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor"/><rect x="21" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div>
+            <div class="flex-1 overflow-y-auto px-5 pb-24">
+              <div class="flex items-center justify-between mt-1 mb-4">
+                <div>
+                  <div class="text-[11px] text-slate-500">Hi, Cooper</div>
+                  <div class="text-[22px] font-semibold tracking-tight -mt-0.5">Good morning.</div>
+                </div>
+                <div class="avatar bg-emerald-700">CD</div>
+              </div>
+
+              <!-- Profile card -->
+              <div class="rounded-2xl bg-gradient-to-br from-emerald-700 to-emerald-900 text-white p-5 shadow-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-[11px] uppercase tracking-wider text-emerald-200">Digital BCR · SA-0421</div>
+                    <div class="text-[18px] font-semibold mt-1">Cooper Daniels</div>
+                    <div class="text-[12px] text-emerald-200 tabular">71 kg · Orthodox · ABA</div>
+                  </div>
+                  <div class="pill bg-white/15 text-white border border-white/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300"></span> Clear</div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 mt-5 text-center">
+                  <div><div class="text-[18px] font-semibold tabular">8</div><div class="text-[10px] text-emerald-200">W</div></div>
+                  <div><div class="text-[18px] font-semibold tabular">2</div><div class="text-[10px] text-emerald-200">L</div></div>
+                  <div><div class="text-[18px] font-semibold tabular">0</div><div class="text-[10px] text-emerald-200">D</div></div>
+                  <div><div class="text-[18px] font-semibold tabular">1</div><div class="text-[10px] text-emerald-200">NC</div></div>
+                </div>
+              </div>
+
+              <!-- Next bout countdown -->
+              <div class="rounded-2xl bg-white border border-slate-200 p-4 mt-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <div class="text-[11px] uppercase tracking-wider text-emerald-700 font-medium">Next bout</div>
+                    <div class="text-[15px] font-semibold mt-0.5">vs M. Tjuwanpa</div>
+                    <div class="text-[11px] text-slate-500">Riverland Open · Berri Town Hall</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[24px] font-semibold tabular leading-none">29</div>
+                    <div class="text-[10px] text-slate-500 uppercase tracking-wider">days</div>
+                  </div>
+                </div>
+                <div class="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-emerald-600" style="width:32%"></div></div>
+                <div class="flex justify-between mt-1 text-[10px] text-slate-500"><span>Suspension lifts 22 Jun</span><span>Bell 22 Jun · 19:00</span></div>
+              </div>
+
+              <!-- Compliance checklist -->
+              <div class="rounded-2xl bg-white border border-slate-200 p-4 mt-4">
+                <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Compliance · ready to box</div>
+                <ul class="mt-3 space-y-2 text-[13px]">
+                  <li class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-emerald-500 grid place-items-center text-white text-[10px]">✓</span> Yearly medical</span><span class="text-[11px] text-slate-500">263d left</span></li>
+                  <li class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-emerald-500 grid place-items-center text-white text-[10px]">✓</span> Pre-comp cert</span><span class="text-[11px] text-slate-500">71d left</span></li>
+                  <li class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-emerald-500 grid place-items-center text-white text-[10px]">✓</span> Serology</span><span class="text-[11px] text-slate-500">173d</span></li>
+                  <li class="flex items-center justify-between"><span class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-amber-500 grid place-items-center text-white text-[10px]">!</span> Protective suspension</span><span class="text-[11px] text-amber-700">lifts 22 Jun</span></li>
+                </ul>
+              </div>
+
+              <!-- Recent results -->
+              <div class="rounded-2xl bg-white border border-slate-200 p-4 mt-4">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="text-[11px] uppercase tracking-wider text-slate-500 font-medium">Recent results</div>
+                  <button class="text-[11px] text-emerald-700">View BCR</button>
+                </div>
+                <ul class="text-[13px] divide-y divide-slate-100">
+                  <li class="py-2 flex items-center justify-between"><span class="tabular">23 May · vs Tjuwanpa</span><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP 3R</span></li>
+                  <li class="py-2 flex items-center justify-between"><span class="tabular">11 Apr · vs Patel</span><span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">WP UD</span></li>
+                  <li class="py-2 flex items-center justify-between"><span class="tabular">22 Feb · vs Cavanaugh</span><span class="pill bg-rose-50 text-rose-600 border border-rose-100">L RSCH</span></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Bottom tab bar -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 pt-1.5 pb-7 px-4 flex justify-around z-20">
+              <div class="flex flex-col items-center text-emerald-700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="text-[10px] mt-0.5 font-medium">Home</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="text-[10px] mt-0.5">Events</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="text-[10px] mt-0.5">BCR</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg><span class="text-[10px] mt-0.5">Profile</span></div>
+            </div>
+            <div class="iphone-home"></div>
+          </div>
+
+          <!-- ====== MSCREEN: RINGSIDE DOCTOR ====== -->
+          <div class="mscreen flex-col h-full" data-mscreen="ringside">
+            <div class="iphone-statusbar"><span class="tabular">9:41</span><span class="flex items-center gap-1.5"><svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4" y="4" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="9" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 0c2.5 0 4.8 1 6.5 2.5l-1.3 1.3C11.3 2.5 9.5 1.7 7.5 1.7s-3.8.8-5.2 2.1L1 2.5C2.7 1 5 0 7.5 0z"/></svg><svg width="24" height="11" viewBox="0 0 24 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor"/><rect x="21" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div>
+            <div class="flex-1 overflow-y-auto pb-32">
+              <!-- Bout header -->
+              <div class="px-5 pb-3">
+                <div class="flex items-center justify-between">
+                  <button class="text-[13px] text-emerald-700 flex items-center gap-1">‹ Card 14</button>
+                  <span class="pill bg-amber-50 text-amber-700 border border-amber-100 text-[10px]">Offline · queue 1</span>
+                </div>
+                <div class="text-[10px] uppercase tracking-wider text-slate-500 mt-3">Bout 7 · 71 kg · 3 × 3'</div>
+                <div class="text-[18px] font-semibold tracking-tight">Post-bout assessment</div>
+              </div>
+
+              <div class="px-5 mb-4">
+                <div class="rounded-2xl border border-slate-200 overflow-hidden">
+                  <div class="grid grid-cols-2 text-center">
+                    <div class="p-3 bg-rose-50">
+                      <div class="text-[10px] uppercase tracking-wider text-rose-700">Red corner</div>
+                      <div class="font-semibold mt-1">Cooper Daniels</div>
+                      <div class="text-[11px] text-rose-700 mt-1">Winner · WP 3R</div>
+                    </div>
+                    <div class="p-3 bg-sky-50">
+                      <div class="text-[10px] uppercase tracking-wider text-sky-700">Blue corner</div>
+                      <div class="font-semibold mt-1">M. Tjuwanpa</div>
+                      <div class="text-[11px] text-sky-700 mt-1">Loser</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Assessment form -->
+              <div class="px-5">
+                <div class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Assessing · Cooper Daniels (red)</div>
+                <div class="rounded-2xl border border-slate-200 divide-y divide-slate-100">
+                  <div class="p-3 flex items-center justify-between">
+                    <span class="text-[13px]">Loss of consciousness</span>
+                    <div class="flex gap-1.5">
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 font-medium">No</button>
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-slate-200">Yes</button>
+                    </div>
+                  </div>
+                  <div class="p-3 flex items-center justify-between">
+                    <span class="text-[13px]">RSC head</span>
+                    <div class="flex gap-1.5">
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 font-medium">No</button>
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-slate-200">Yes</button>
+                    </div>
+                  </div>
+                  <div class="p-3 flex items-center justify-between">
+                    <span class="text-[13px]">SCAT6 vs baseline</span>
+                    <span class="text-[12px] text-slate-500">No change · ↑0</span>
+                  </div>
+                  <div class="p-3 flex items-center justify-between">
+                    <span class="text-[13px]">Facial lacerations</span>
+                    <span class="text-[12px] text-slate-500">1 · L brow · steri-strip</span>
+                  </div>
+                  <div class="p-3 flex items-center justify-between">
+                    <span class="text-[13px]">Refer for CT</span>
+                    <div class="flex gap-1.5">
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 font-medium">No</button>
+                      <button class="px-3 py-1 text-[12px] rounded-md border border-slate-200">Yes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Suspension decision -->
+              <div class="px-5 mt-5">
+                <div class="text-[10px] uppercase tracking-wider text-slate-500 mb-2">Suspension decision · WB Medical Handbook §7</div>
+                <div class="rounded-2xl border border-slate-200 p-3 space-y-2">
+                  <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                    <input type="radio" name="susp" class="text-emerald-600">
+                    <div>
+                      <div class="text-[13px] font-medium">No suspension</div>
+                      <div class="text-[11px] text-slate-500">Routine post-bout, no head impact</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                    <input type="radio" name="susp" class="text-emerald-600" checked>
+                    <div>
+                      <div class="text-[13px] font-medium text-emerald-900">Protective · 30 days <span class="text-[10px] font-normal text-emerald-700">· recommended</span></div>
+                      <div class="text-[11px] text-emerald-800">Minor laceration, no LOC, no RSCH</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                    <input type="radio" name="susp" class="text-emerald-600">
+                    <div>
+                      <div class="text-[13px] font-medium">Mandatory · 45 days</div>
+                      <div class="text-[11px] text-slate-500">Concussive symptoms without LOC</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                    <input type="radio" name="susp" class="text-emerald-600">
+                    <div>
+                      <div class="text-[13px] font-medium">Mandatory · 90 days</div>
+                      <div class="text-[11px] text-slate-500">LOC &lt;1 min OR 2nd KO/RSCH in 3 mo</div>
+                    </div>
+                  </label>
+                  <label class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50">
+                    <input type="radio" name="susp" class="text-emerald-600">
+                    <div>
+                      <div class="text-[13px] font-medium">Specialist review</div>
+                      <div class="text-[11px] text-slate-500">3rd KO in 12 mo / LOC ≥1 min</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="px-5 mt-4">
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-slate-600 leading-relaxed">
+                  <strong class="text-slate-900">Audit:</strong> Decision will be written to Cooper Daniels' digital BCR with your signature, the boxer's signature, and a timestamped record of the WB Handbook rule applied. Visible across all state federations from the moment of sync.
+                </div>
+              </div>
+            </div>
+
+            <!-- Apply button -->
+            <div class="absolute bottom-0 left-0 right-0 px-5 pt-3 pb-7 bg-white/95 backdrop-blur border-t border-slate-200">
+              <button class="w-full bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl py-3.5 text-[15px] font-semibold shadow-lg ring-emerald-strong">Apply 30-day protective suspension</button>
+              <div class="text-center text-[10px] text-slate-500 mt-1.5">Signature required from boxer + doctor</div>
+            </div>
+            <div class="iphone-home"></div>
+          </div>
+
+          <!-- ====== MSCREEN: COACH VIEW ====== -->
+          <div class="mscreen flex-col h-full" data-mscreen="coach">
+            <div class="iphone-statusbar"><span class="tabular">9:41</span><span class="flex items-center gap-1.5"><svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4" y="4" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="9" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 0c2.5 0 4.8 1 6.5 2.5l-1.3 1.3C11.3 2.5 9.5 1.7 7.5 1.7s-3.8.8-5.2 2.1L1 2.5C2.7 1 5 0 7.5 0z"/></svg><svg width="24" height="11" viewBox="0 0 24 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor"/><rect x="21" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div>
+            <div class="flex-1 overflow-y-auto px-5 pb-24">
+              <div class="flex items-center justify-between mt-1 mb-4">
+                <div>
+                  <div class="text-[11px] text-slate-500">Coach view · Silver</div>
+                  <div class="text-[22px] font-semibold tracking-tight -mt-0.5">Mike Kollatos</div>
+                  <div class="text-[12px] text-slate-500">Adelaide Boxing Academy · 12 fighters</div>
+                </div>
+                <div class="avatar bg-slate-600">MK</div>
+              </div>
+
+              <!-- Tonight stripe -->
+              <div class="rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 shadow-lg">
+                <div class="text-[10px] uppercase tracking-wider text-slate-300">Tonight · Whyalla RSL Card 14</div>
+                <div class="text-[18px] font-semibold mt-1">3 of your fighters on card</div>
+                <div class="text-[12px] text-slate-300 mt-1 tabular">First bell 19:00 ACST · 4h 23m</div>
+                <div class="grid grid-cols-3 gap-2 mt-4">
+                  <div class="bg-white/10 rounded-lg p-2 text-center"><div class="text-[10px] text-slate-300">Bout 7</div><div class="text-[12px] font-semibold">Daniels</div></div>
+                  <div class="bg-white/10 rounded-lg p-2 text-center"><div class="text-[10px] text-slate-300">Bout 2</div><div class="text-[12px] font-semibold">Adamopoulos</div></div>
+                  <div class="bg-white/10 rounded-lg p-2 text-center"><div class="text-[10px] text-slate-300">Bout 3</div><div class="text-[12px] font-semibold">Nguyen</div></div>
+                </div>
+              </div>
+
+              <!-- Push-to-acknowledge cards -->
+              <div class="text-[10px] uppercase tracking-wider text-slate-500 mt-5 mb-2 px-1">Pre-bout sign-off · waiting on you</div>
+              <ul class="space-y-3">
+                <li class="rounded-2xl bg-white border border-slate-200 p-4">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar bg-emerald-700">CD</div>
+                    <div class="flex-1">
+                      <div class="text-[14px] font-semibold">Cooper Daniels</div>
+                      <div class="text-[11px] text-slate-500">71 kg · medically cleared · Bout 7</div>
+                    </div>
+                    <div class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">Clear</div>
+                  </div>
+                  <div class="mt-3 grid grid-cols-2 gap-2">
+                    <button class="border border-slate-200 rounded-lg py-2 text-[12px]">Withdraw</button>
+                    <button class="bg-emerald-700 text-white rounded-lg py-2 text-[12px] font-medium">Acknowledge</button>
+                  </div>
+                </li>
+                <li class="rounded-2xl bg-white border border-amber-200 p-4">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar bg-amber-600">YW</div>
+                    <div class="flex-1">
+                      <div class="text-[14px] font-semibold">Yindii Wilson-Riley</div>
+                      <div class="text-[11px] text-amber-700">Pre-comp cert expires in 14d — renew before Riverland Open</div>
+                    </div>
+                    <div class="pill bg-amber-50 text-amber-700 border border-amber-100">Action</div>
+                  </div>
+                  <div class="mt-3 grid grid-cols-2 gap-2">
+                    <button class="border border-slate-200 rounded-lg py-2 text-[12px]">Later</button>
+                    <button class="bg-amber-600 text-white rounded-lg py-2 text-[12px] font-medium">Book GP</button>
+                  </div>
+                </li>
+                <li class="rounded-2xl bg-white border border-slate-200 p-4">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar bg-emerald-700">MA</div>
+                    <div class="flex-1">
+                      <div class="text-[14px] font-semibold">Mia Adamopoulos</div>
+                      <div class="text-[11px] text-slate-500">57 kg · medically cleared · Bout 2</div>
+                    </div>
+                    <div class="pill bg-emerald-50 text-emerald-700 border border-emerald-100">Clear</div>
+                  </div>
+                  <div class="mt-3 grid grid-cols-2 gap-2">
+                    <button class="border border-slate-200 rounded-lg py-2 text-[12px]">Withdraw</button>
+                    <button class="bg-emerald-700 text-white rounded-lg py-2 text-[12px] font-medium">Acknowledge</button>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 pt-1.5 pb-7 px-4 flex justify-around z-20">
+              <div class="flex flex-col items-center text-emerald-700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="text-[10px] mt-0.5 font-medium">Today</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M22 11h-6"/></svg><span class="text-[10px] mt-0.5">Roster</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="text-[10px] mt-0.5">Events</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg><span class="text-[10px] mt-0.5">Profile</span></div>
+            </div>
+            <div class="iphone-home"></div>
+          </div>
+
+          <!-- ====== MSCREEN: SUSPENSION LOOKUP ====== -->
+          <div class="mscreen flex-col h-full" data-mscreen="lookup">
+            <div class="iphone-statusbar"><span class="tabular">9:41</span><span class="flex items-center gap-1.5"><svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4" y="4" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="9" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 0c2.5 0 4.8 1 6.5 2.5l-1.3 1.3C11.3 2.5 9.5 1.7 7.5 1.7s-3.8.8-5.2 2.1L1 2.5C2.7 1 5 0 7.5 0z"/></svg><svg width="24" height="11" viewBox="0 0 24 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor"/><rect x="21" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div>
+            <div class="flex-1 overflow-y-auto px-5 pb-24">
+              <div class="mt-1 mb-3">
+                <div class="text-[22px] font-semibold tracking-tight">Suspension lookup</div>
+                <div class="text-[12px] text-slate-500">Cross-state · live · Medical Jury tool</div>
+              </div>
+
+              <!-- Search -->
+              <div class="rounded-2xl bg-white border border-slate-200 p-2 flex items-center gap-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-slate-400 ml-2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <input class="flex-1 border-0 focus:ring-0 text-[14px] bg-transparent" value="Tane Hohaia" />
+                <span class="pill bg-slate-100 text-slate-500 text-[10px] mr-1">BCR / name / DOB</span>
+              </div>
+
+              <!-- Result card: BLOCKED -->
+              <div class="mt-4 rounded-2xl bg-rose-50 border border-rose-200 p-4 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="avatar bg-rose-600">TH</div>
+                    <div>
+                      <div class="text-[15px] font-semibold">Tane Hohaia</div>
+                      <div class="text-[11px] text-rose-700 tabular">DOB 22 Aug 1999 · BCR-SA-0312 · 80 kg</div>
+                    </div>
+                  </div>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+                </div>
+                <div class="mt-3 p-3 rounded-xl bg-white border border-rose-100">
+                  <div class="text-[11px] uppercase tracking-wider text-rose-700 font-semibold">Active suspension · do not sign in</div>
+                  <div class="text-[13px] font-medium mt-1">KO_LOC_LT_1MIN · 90 days</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5 tabular">05 Apr 2026 → 04 Jul 2026 (41d remaining)</div>
+                  <div class="text-[12px] text-slate-600 mt-2">Imposed by Dr S. Lew · Bendigo Stadium · WB Handbook §7.2.2</div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-3">
+                  <button class="border border-rose-300 text-rose-700 rounded-xl py-2 text-[12px] font-medium">View bout</button>
+                  <button class="border border-rose-300 text-rose-700 rounded-xl py-2 text-[12px] font-medium">Notify Coach</button>
+                </div>
+              </div>
+
+              <!-- Recent lookups -->
+              <div class="text-[10px] uppercase tracking-wider text-slate-500 mt-5 mb-2 px-1">Recent lookups</div>
+              <ul class="rounded-2xl bg-white border border-slate-200 divide-y divide-slate-100">
+                <li class="p-3 flex items-center gap-3">
+                  <div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">CD</div>
+                  <div class="flex-1">
+                    <div class="text-[13px] font-medium">Cooper Daniels</div>
+                    <div class="text-[11px] text-amber-700">30d protective · lifts 22 Jun</div>
+                  </div>
+                  <span class="pill bg-amber-50 text-amber-700 border border-amber-100 text-[10px]">Hold</span>
+                </li>
+                <li class="p-3 flex items-center gap-3">
+                  <div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">JN</div>
+                  <div class="flex-1">
+                    <div class="text-[13px] font-medium">Joseph Nguyen</div>
+                    <div class="text-[11px] text-emerald-700">No active suspension</div>
+                  </div>
+                  <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px]">Clear</span>
+                </li>
+                <li class="p-3 flex items-center gap-3">
+                  <div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">YW</div>
+                  <div class="flex-1">
+                    <div class="text-[13px] font-medium">Yindii Wilson-Riley</div>
+                    <div class="text-[11px] text-amber-700">Pre-comp expiring 14d</div>
+                  </div>
+                  <span class="pill bg-amber-50 text-amber-700 border border-amber-100 text-[10px]">Check</span>
+                </li>
+                <li class="p-3 flex items-center gap-3">
+                  <div class="avatar bg-emerald-700" style="width:34px;height:34px;font-size:12px">MA</div>
+                  <div class="flex-1">
+                    <div class="text-[13px] font-medium">Mia Adamopoulos</div>
+                    <div class="text-[11px] text-emerald-700">No active suspension</div>
+                  </div>
+                  <span class="pill bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px]">Clear</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 pt-1.5 pb-7 px-4 flex justify-around z-20">
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="text-[10px] mt-0.5">Card</span></div>
+              <div class="flex flex-col items-center text-emerald-700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span class="text-[10px] mt-0.5 font-medium">Lookup</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="text-[10px] mt-0.5">Audit</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg><span class="text-[10px] mt-0.5">Me</span></div>
+            </div>
+            <div class="iphone-home"></div>
+          </div>
+
+          <!-- ====== MSCREEN: AUDIT TRAIL ====== -->
+          <div class="mscreen flex-col h-full" data-mscreen="audit">
+            <div class="iphone-statusbar"><span class="tabular">9:41</span><span class="flex items-center gap-1.5"><svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4" y="4" width="3" height="7" rx="1"/><rect x="8" y="2" width="3" height="9" rx="1"/><rect x="12" y="0" width="3" height="11" rx="1"/></svg><svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 0c2.5 0 4.8 1 6.5 2.5l-1.3 1.3C11.3 2.5 9.5 1.7 7.5 1.7s-3.8.8-5.2 2.1L1 2.5C2.7 1 5 0 7.5 0z"/></svg><svg width="24" height="11" viewBox="0 0 24 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="20" height="10" rx="2.5"/><rect x="2" y="2" width="15" height="7" rx="1" fill="currentColor"/><rect x="21" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg></span></div>
+            <div class="flex-1 overflow-y-auto px-5 pb-24">
+              <div class="mt-1 mb-3">
+                <button class="text-[12px] text-emerald-700 flex items-center gap-1">‹ Back to BCR</button>
+                <div class="text-[22px] font-semibold tracking-tight mt-2">Audit trail</div>
+                <div class="text-[12px] text-slate-500">Cooper Daniels · Bout 7 · Whyalla RSL Card 14</div>
+              </div>
+
+              <div class="rounded-2xl bg-slate-50 border border-slate-200 p-3 mb-4 text-[11px] text-slate-700 leading-relaxed">
+                <strong class="text-slate-900">Medico-legally defensible chain.</strong> Every read/write to this boxer's health information is recorded immutably for 7 years. Reproduces in court, OAIC, AHPRA and AGPAL audit.
+              </div>
+
+              <!-- Timeline -->
+              <div class="relative pl-6">
+                <div class="absolute left-2 top-2 bottom-2 w-px bg-slate-200"></div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 21:38:14 ACST</div>
+                  <div class="text-[13px] font-semibold">Suspension applied · 30d protective</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Dr J. Ross · AHPRA MED0001234567 · WB Handbook §7.2.1</div>
+                  <div class="text-[11px] text-slate-500 mt-1 tabular">Signed by boxer · IP 10.42.0.18 · iPad 12.9 (iOS 19.4)</div>
+                </div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 21:36:02 ACST</div>
+                  <div class="text-[13px] font-semibold">Post-bout exam recorded</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">No LOC · no RSCH · SCAT6 unchanged · L-brow lac steri-stripped</div>
+                </div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-slate-400 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 21:32:50 ACST</div>
+                  <div class="text-[13px] font-semibold">Bout 7 ended · WP 3R (red)</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Ref P. Williams · 3 judges UD 30-27 · 29-28 · 30-27</div>
+                </div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-slate-400 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 20:54:01 ACST</div>
+                  <div class="text-[13px] font-semibold">Pre-bout exam recorded</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Dr B. Watson · BP 122/78 · resting HR 64 · cleared</div>
+                </div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-slate-400 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 18:12:33 ACST</div>
+                  <div class="text-[13px] font-semibold">Weigh-in · 70.4 kg</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Within 71 kg class · pass · entered by official J. Sciberras</div>
+                </div>
+
+                <div class="relative mb-4">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-emerald-600 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Sun 24 May · 18:11:09 ACST</div>
+                  <div class="text-[13px] font-semibold">Compliance check passed</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Yearly med ✓ · pre-comp ✓ · serology ✓ · no active suspension</div>
+                </div>
+
+                <div class="relative">
+                  <div class="absolute -left-[20px] top-1 w-4 h-4 rounded-full bg-slate-300 ring-4 ring-white"></div>
+                  <div class="text-[11px] text-slate-500 tabular">Tue 02 May · 14:22 ACST</div>
+                  <div class="text-[13px] font-semibold">Pre-comp certificate issued</div>
+                  <div class="text-[12px] text-slate-600 mt-0.5">Dr J. Ross · valid 02 May → 02 Aug 2026</div>
+                </div>
+              </div>
+
+              <div class="mt-5 grid grid-cols-2 gap-2">
+                <button class="border border-slate-200 rounded-xl py-2.5 text-[12px] font-medium">Export PDF</button>
+                <button class="border border-slate-200 rounded-xl py-2.5 text-[12px] font-medium">Share to AGPAL</button>
+              </div>
+            </div>
+
+            <div class="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-slate-200 pt-1.5 pb-7 px-4 flex justify-around z-20">
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg><span class="text-[10px] mt-0.5">Card</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span class="text-[10px] mt-0.5">Lookup</span></div>
+              <div class="flex flex-col items-center text-emerald-700"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span class="text-[10px] mt-0.5 font-medium">Audit</span></div>
+              <div class="flex flex-col items-center text-slate-400"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg><span class="text-[10px] mt-0.5">Me</span></div>
+            </div>
+            <div class="iphone-home"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="max-w-[1600px] mx-auto px-5 py-8 text-center text-[11px] text-slate-400">
+  BoxSafe interactive mockup · Sun 24 May 2026 · click around — every screen, web and mobile, is reachable from the navigation. No data leaves this page.
+</footer>
+
+<script>
+  // Screen routing — web
+  const webBtns = document.querySelectorAll('.nav-btn');
+  const screens = document.querySelectorAll('.screen');
+  webBtns.forEach(b => b.addEventListener('click', () => {
+    const target = b.dataset.screen;
+    screens.forEach(s => s.classList.toggle('active', s.dataset.screen === target));
+    webBtns.forEach(x => {
+      const active = x.dataset.screen === target;
+      x.classList.toggle('bg-emerald-700', active);
+      x.classList.toggle('text-white', active);
+      x.classList.toggle('shadow-sm', active);
+      x.classList.toggle('text-slate-600', !active);
+      x.classList.toggle('hover:bg-white', !active);
+      x.classList.toggle('hover:text-slate-900', !active);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
+
+  // Screen routing — mobile
+  const mBtns = document.querySelectorAll('.mnav-btn');
+  const mscreens = document.querySelectorAll('.mscreen');
+  mBtns.forEach(b => b.addEventListener('click', () => {
+    const target = b.dataset.mscreen;
+    mscreens.forEach(s => s.classList.toggle('active', s.dataset.mscreen === target));
+    mBtns.forEach(x => {
+      const active = x.dataset.mscreen === target;
+      x.classList.toggle('bg-emerald-700', active);
+      x.classList.toggle('text-white', active);
+      x.classList.toggle('shadow-sm', active);
+      x.classList.toggle('text-slate-600', !active);
+      x.classList.toggle('hover:bg-slate-50', !active);
+    });
+  }));
+
+  // Web / Mobile top-level toggle
+  const webApp = document.getElementById('web-app');
+  const mobileApp = document.getElementById('mobile-app');
+  const viewWebBtn = document.getElementById('view-web');
+  const viewMobileBtn = document.getElementById('view-mobile');
+  function setView(view) {
+    const isWeb = view === 'web';
+    webApp.style.display = isWeb ? '' : 'none';
+    mobileApp.style.display = isWeb ? 'none' : '';
+    viewWebBtn.classList.toggle('bg-white', isWeb);
+    viewWebBtn.classList.toggle('shadow-sm', isWeb);
+    viewWebBtn.classList.toggle('text-slate-900', isWeb);
+    viewWebBtn.classList.toggle('text-slate-600', !isWeb);
+    viewMobileBtn.classList.toggle('bg-white', !isWeb);
+    viewMobileBtn.classList.toggle('shadow-sm', !isWeb);
+    viewMobileBtn.classList.toggle('text-slate-900', !isWeb);
+    viewMobileBtn.classList.toggle('text-slate-600', isWeb);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  viewWebBtn.addEventListener('click', () => setView('web'));
+  viewMobileBtn.addEventListener('click', () => setView('mobile'));
+</script>
+</body>
+</html>
